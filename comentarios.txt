@@ -1,0 +1,14 @@
+A maioria do código esta na classe main, o modelo da aplicação possui apenas um tipo de objeto Piloto e um teste unitário.
+
+O método geraHashMapCorrida() lê o arquivo corrida.txt e popula, com as informações do log o atributo "hmPilotos" da classe  "mainClass",um HashMap de objetos do tipo "Piloto".
+
+O método geraOrdemDeChegada() popula o atributo "lPilotos", uma lista de objetos "Piloto" com as informações do HashMap "Pilotos"
+
+O método definePosições() ordena a lista "lPilotos" pela ultimo timestamp do piloto, para cada piloto o atributo "posição" é "setado" para a sua posição na lista
+
+O método calcVelocidadeMedia() calcula a velocidade média de todos os pilotos. 
+
+O método TempoSegundosString() transforma uma string no formato "mm:ss.SSS" para um valor Double representando segundos. 
+
+O método main executa os quatro métodos e imprime no console a lista de pilotos por ordem de chegada.
+
