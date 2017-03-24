@@ -18,33 +18,37 @@ import com.rafael.kartrank.model.Piloto;
 
 public class mainClass {
 
-	private HashMap<Integer, Piloto> hmPilotos = new HashMap<Integer, Piloto>();
-	private List<Piloto> lPilotos = new ArrayList<Piloto>();
+	public static HashMap<Integer, Piloto> hmPilotos = new HashMap<Integer, Piloto>();
+	public static List<Piloto> lPilotos = new ArrayList<Piloto>();
+	public static Double melhorVolta = 0.0;
 	
 	public static void main(String arg[]) throws IOException, ParseException {
-		mainClass m = new mainClass();
-		m.geraHashMapCorrida();
-		m.geraListaPilotos();
-		m.calcVelocidadeMedia();
-		m.definePosições();
-		for(Piloto p : m.lPilotos)
+		
+		geraHashMapPiloto();
+		geraListaPilotos();
+		calcVelocidadeMedia();
+		melhorVolta = calcMelhorVolta();
+		definePosicoes();
+		calcDiferencaPrimeiro();
+		for(Piloto p : lPilotos)
 		{
 		System.out.println(p);		
 		}
+		System.out.println("Melhor volta da corrida: " + melhorVolta + "s");
 	}
 
-	private void geraHashMapCorrida() throws IOException, ParseException {
+	public static void geraHashMapPiloto() throws IOException, ParseException {
 		BufferedReader br = new BufferedReader(new FileReader("corrida.txt"));
 		br.readLine();
 		String line = br.readLine();
 		while (line != null) {
 			String[] dados = line.split("\\s+");
 			SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss.SSS");
-		    Date uhora = dateFormat.parse(dados[0]);
+		    Date umomento = dateFormat.parse(dados[0]);
 			int id = Integer.parseInt(dados[1]);
 			String nome = dados[3];
 			int nvolta = Integer.parseInt(dados[4]);
-			double tvolta = TempoSegundosString(dados[5]);
+			double tvolta = tempoEmSegundos(dados[5]);
 			double vmedia = Double.parseDouble(dados[6].replace(",", "."));
 			
 			Piloto p = new Piloto();
@@ -53,7 +57,7 @@ public class mainClass {
 				hmPilotos.get(id).gettVoltas().add(tvolta);
 				hmPilotos.get(id).getVelocidades().add(vmedia);
 				hmPilotos.get(id).setvCompletas(nvolta);
-				hmPilotos.get(id).setUltimaHora(uhora);
+				hmPilotos.get(id).setUltimoMomento(umomento);
 			} else {
 				p.setId(id);
 				p.setNome(nome);
@@ -61,7 +65,7 @@ public class mainClass {
 				p.setVelocidades(new ArrayList<Double>());
 				p.gettVoltas().add(tvolta);
 				p.getVelocidades().add(vmedia);
-				p.setUltimaHora(uhora);
+				p.setUltimoMomento(umomento);
 				hmPilotos.put(id, p);
 			}
 			line = br.readLine();
@@ -69,7 +73,7 @@ public class mainClass {
 		br.close();
 	}
 	
-	private void geraListaPilotos()
+	public static void geraListaPilotos()
 	{
 		for(Integer key : hmPilotos.keySet())
 		{
@@ -78,7 +82,7 @@ public class mainClass {
 	}
 	
 	
-	private void calcVelocidadeMedia()
+	public static void calcVelocidadeMedia()
 	{
 		for(Piloto p : lPilotos)
 		{
@@ -86,14 +90,32 @@ public class mainClass {
 		}
 	}
 	
+	public static Double calcMelhorVolta()
+	{
+		List<Double> mVoltas = new ArrayList<Double>();
+		for(Piloto p : lPilotos)
+		{
+			p.calcMelhorVolta();
+			mVoltas.add(p.getMelhorVolta());
+		}
+		return Collections.min(mVoltas,null);
+	}
 	
-	private void definePosições()
+	public static void calcDiferencaPrimeiro()
+	{
+		Date tempoPrimeiro = lPilotos.get(0).getUltimoMomento();
+		for(Piloto p : lPilotos) {
+			p.calcTempoDoPrimeiro(tempoPrimeiro);
+		}
+	}
+	
+	public static void definePosicoes()
 	{
 		
 		Collections.sort(lPilotos, new Comparator<Piloto>() {
 		    @Override
 		    public int compare(Piloto p1, Piloto p2) {
-		        return p1.getUltimaHora().compareTo(p2.getUltimaHora());
+		        return p1.getUltimoMomento().compareTo(p2.getUltimoMomento());
 		    }
 		});
 		
@@ -103,7 +125,7 @@ public class mainClass {
 		}
 	}
 	
-	public Double TempoSegundosString(String s) {
+	public static Double tempoEmSegundos(String s) {
 		String[] numeros = s.split("[:|.]");
 		Double t = 60 * Double.parseDouble(numeros[0]) + Double.parseDouble(numeros[1])
 				+ (Double.parseDouble(numeros[2]) / 1000);

@@ -10,5 +10,9 @@ O método calcVelocidadeMedia() calcula a velocidade média de todos os pilotos.
 
 O método TempoSegundosString() transforma uma string no formato "mm:ss.SSS" para um valor Double representando segundos. 
 
+O método calcDiferencaPrimeiro() calcula a diferença do primeiro colocado para cada piloto.
+
+O método calcMelhorVolta() calcula a melhor volta de cada piloto e a melhor volta de toda corrida.
+
 O método main executa os quatro métodos e imprime no console a lista de pilotos por ordem de chegada.
 
